@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -37,26 +37,3 @@ jobs:
       with:
         name: HeartRate-Broadcast-APK
         path: output/*.apk
-        
-    - name: Create Release
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: softprops/action-gh-release@v2
-      with:
-        files: output/*.apk
-        tag_name: v1.0.${{ github.run_number }}
-        name: Release v1.0.${{ github.run_number }}
-        body: |
-          OPPO Watch 3 心率广播 App
-          
-          ## 功能
-          - 实时心率监测
-          - 本地广播心率数据
-          - 前台服务保活
-          - 开机自启动
-          
-          ## 安装
-          ```bash
-          adb install -r HeartRate-Broadcast-v1.0-debug.apk
-          ```
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
