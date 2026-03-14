@@ -1,0 +1,62 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug
+
+    - name: Rename APK
+      run: |
+        mkdir -p output
+        cp app/build/outputs/apk/debug/app-debug.apk output/HeartRate-Broadcast-v1.0-debug.apk
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: HeartRate-Broadcast-APK
+        path: output/*.apk
+        
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: output/*.apk
+        tag_name: v1.0.${{ github.run_number }}
+        name: Release v1.0.${{ github.run_number }}
+        body: |
+          OPPO Watch 3 心率广播 App
+          
+          ## 功能
+          - 实时心率监测
+          - 本地广播心率数据
+          - 前台服务保活
+          - 开机自启动
+          
+          ## 安装
+          ```bash
+          adb install -r HeartRate-Broadcast-v1.0-debug.apk
+          ```
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">心率广播</string>
+    <string name="heart_rate_label">心率</string>
+    <string name="bpm_unit">BPM</string>
+    <string name="monitoring">监测中...</string>
+    <string name="waiting_permission">等待权限...</string>
+    <string name="data_broadcasted">数据已广播</string>
+</resources>
